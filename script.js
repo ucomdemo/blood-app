@@ -90,7 +90,6 @@ function displayRecords() {
 function createRecordCard(record) {
     const card = document.createElement('div');
     card.className = 'record-card ' + getBPCategory(record.systolic, record.diastolic);
-    card.style.animation = 'recordSlideIn 0.5s ease-out';
     
     card.innerHTML = `
         <div class="record-header">
