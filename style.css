@@ -1,3 +1,35 @@
+:root {
+    --bg-gradient-start: #667eea;
+    --bg-gradient-end: #764ba2;
+    --card-bg: white;
+    --text-primary: #333;
+    --text-secondary: #555;
+    --text-tertiary: #666;
+    --text-quaternary: #888;
+    --text-quinary: #999;
+    --border-color: #e0e0e0;
+    --input-bg: white;
+    --record-card-bg: #f8f9fa;
+    --shadow-color: rgba(0, 0, 0, 0.2);
+    --shadow-light: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme {
+    --bg-gradient-start: #1a1a2e;
+    --bg-gradient-end: #16213e;
+    --card-bg: #0f3460;
+    --text-primary: #e0e0e0;
+    --text-secondary: #c0c0c0;
+    --text-tertiary: #a0a0a0;
+    --text-quaternary: #808080;
+    --text-quinary: #707070;
+    --border-color: #1e4d6e;
+    --input-bg: #1a3a52;
+    --record-card-bg: #1a3a52;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --shadow-light: rgba(0, 0, 0, 0.3);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -6,9 +38,36 @@
 
 body {
     font-family: 'Microsoft JhengHei', 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
     min-height: 100vh;
     padding: 20px;
+    transition: background 0.3s ease;
+}
+
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: var(--card-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    transition: transform 0.2s, box-shadow 0.2s;
+    z-index: 1000;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px var(--shadow-color);
+}
+
+.theme-icon {
+    font-size: 1.8em;
 }
 
 .container {
@@ -25,16 +84,16 @@ h1 {
 }
 
 h2 {
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 20px;
     font-size: 1.5em;
 }
 
 .input-form {
-    background: white;
+    background: var(--card-bg);
     padding: 30px;
     border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 30px var(--shadow-color);
     margin-bottom: 30px;
 }
 
@@ -45,7 +104,7 @@ h2 {
 .form-group label {
     display: block;
     margin-bottom: 8px;
-    color: #555;
+    color: var(--text-secondary);
     font-weight: 600;
     font-size: 0.95em;
 }
@@ -55,11 +114,13 @@ h2 {
 .form-group textarea {
     width: 100%;
     padding: 12px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     font-size: 1em;
     transition: border-color 0.3s;
     font-family: 'Microsoft JhengHei', Arial, sans-serif;
+    background: var(--input-bg);
+    color: var(--text-primary);
 }
 
 .form-group input:focus,
@@ -96,10 +157,10 @@ h2 {
 }
 
 .records-section {
-    background: white;
+    background: var(--card-bg);
     padding: 30px;
     border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 30px var(--shadow-color);
 }
 
 #recordsList {
@@ -108,7 +169,7 @@ h2 {
 }
 
 .record-card {
-    background: #f8f9fa;
+    background: var(--record-card-bg);
     padding: 20px;
     border-radius: 10px;
     margin-bottom: 15px;
@@ -118,7 +179,7 @@ h2 {
 
 .record-card:hover {
     transform: translateX(5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 15px var(--shadow-light);
 }
 
 .record-header {
@@ -130,7 +191,7 @@ h2 {
 }
 
 .record-datetime {
-    color: #666;
+    color: var(--text-tertiary);
     font-size: 0.95em;
     font-weight: 500;
 }
@@ -163,13 +224,13 @@ h2 {
 }
 
 .data-label {
-    color: #888;
+    color: var(--text-quaternary);
     font-size: 0.85em;
     margin-bottom: 3px;
 }
 
 .data-value {
-    color: #333;
+    color: var(--text-primary);
     font-size: 1.1em;
     font-weight: 600;
 }
@@ -182,7 +243,7 @@ h2 {
 .record-notes {
     margin-top: 15px;
     padding-top: 15px;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--border-color);
 }
 
 .record-notes .data-label {
@@ -190,7 +251,7 @@ h2 {
 }
 
 .record-notes .data-value {
-    color: #555;
+    color: var(--text-secondary);
     font-weight: 400;
     font-size: 0.95em;
     line-height: 1.5;
@@ -198,7 +259,7 @@ h2 {
 
 .empty-message {
     text-align: center;
-    color: #999;
+    color: var(--text-quinary);
     padding: 40px;
     font-size: 1.1em;
 }
