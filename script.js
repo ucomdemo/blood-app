@@ -4,6 +4,10 @@ let bloodPressureRecords = JSON.parse(localStorage.getItem('bloodPressureRecords
 // 頁面載入時顯示所有紀錄
 document.addEventListener('DOMContentLoaded', function() {
     displayRecords();
+    loadTheme();
+    
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', toggleTheme);
 });
 
 // 新增血壓紀錄
@@ -174,3 +178,33 @@ document.addEventListener('keypress', function(event) {
         addRecord();
     }
 });
+
+// 載入主題設定
+function loadTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    const themeIcon = document.querySelector('.theme-icon');
+    
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeIcon.textContent = '☀️';
+    } else {
+        document.body.classList.remove('dark-theme');
+        themeIcon.textContent = '🌙';
+    }
+}
+
+// 切換主題
+function toggleTheme() {
+    const body = document.body;
+    const themeIcon = document.querySelector('.theme-icon');
+    
+    if (body.classList.contains('dark-theme')) {
+        body.classList.remove('dark-theme');
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    } else {
+        body.classList.add('dark-theme');
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    }
+}
