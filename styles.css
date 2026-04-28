@@ -7,6 +7,37 @@
   --accent: #c9683f;
   --accent-dark: #974724;
   --shadow: 0 18px 40px rgba(92, 61, 35, 0.14);
+  --body-gradient-a: rgba(201, 104, 63, 0.22);
+  --body-bg-start: #f8f3ea;
+  --body-bg-mid: #efe2cc;
+  --body-bg-end: #eadbc1;
+  --status-card-start: #fff6ec;
+  --status-card-end: #f5d6bb;
+  --input-bg: rgba(255, 255, 255, 0.9);
+  --record-item-start: rgba(255, 249, 241, 0.95);
+  --record-item-end: rgba(250, 241, 227, 0.85);
+  --badge-bg: rgba(201, 104, 63, 0.12);
+}
+
+[data-theme="dark"] {
+  --bg: #1c1510;
+  --panel: rgba(35, 26, 16, 0.95);
+  --line: #3e2e1c;
+  --text: #ede0cf;
+  --muted: #a08060;
+  --accent: #d97a4a;
+  --accent-dark: #e8a06a;
+  --shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+  --body-gradient-a: rgba(180, 80, 30, 0.18);
+  --body-bg-start: #1c1510;
+  --body-bg-mid: #211810;
+  --body-bg-end: #261c12;
+  --status-card-start: #2a1e12;
+  --status-card-end: #3a2614;
+  --input-bg: rgba(40, 28, 16, 0.9);
+  --record-item-start: rgba(38, 28, 16, 0.98);
+  --record-item-end: rgba(32, 22, 12, 0.92);
+  --badge-bg: rgba(201, 104, 63, 0.2);
 }
 
 * {
@@ -19,8 +50,9 @@ body {
   font-family: "Segoe UI", "Noto Sans TC", sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at top left, rgba(201, 104, 63, 0.22), transparent 30%),
-    linear-gradient(135deg, #f8f3ea 0%, #efe2cc 48%, #eadbc1 100%);
+    radial-gradient(circle at top left, var(--body-gradient-a), transparent 30%),
+    linear-gradient(135deg, var(--body-bg-start) 0%, var(--body-bg-mid) 48%, var(--body-bg-end) 100%);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .app-shell {
@@ -75,7 +107,7 @@ h1 {
   min-width: 170px;
   padding: 18px 20px;
   border-radius: 18px;
-  background: linear-gradient(180deg, #fff6ec 0%, #f5d6bb 100%);
+  background: linear-gradient(180deg, var(--status-card-start) 0%, var(--status-card-end) 100%);
   text-align: center;
 }
 
@@ -133,7 +165,8 @@ textarea {
   border-radius: 14px;
   padding: 12px 14px;
   color: var(--text);
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--input-bg);
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 input:focus,
@@ -187,7 +220,7 @@ button:hover {
   padding: 18px;
   border-radius: 18px;
   border: 1px solid rgba(215, 201, 175, 0.85);
-  background: linear-gradient(180deg, rgba(255, 249, 241, 0.95) 0%, rgba(250, 241, 227, 0.85) 100%);
+  background: linear-gradient(180deg, var(--record-item-start) 0%, var(--record-item-end) 100%);
 }
 
 .record-main {
@@ -217,7 +250,7 @@ button:hover {
 .medication-badge {
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(201, 104, 63, 0.12);
+  background: var(--badge-bg);
   color: var(--accent-dark);
   font-size: 0.9rem;
   white-space: nowrap;
@@ -225,6 +258,68 @@ button:hover {
 
 .record-note:empty {
   display: none;
+}
+
+/* ── Theme Toggle ── */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  grid-column: unset !important;
+  font-weight: inherit !important;
+}
+
+.theme-toggle:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.theme-toggle-track {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #c9b89a 0%, #b8a07e 100%);
+  transition: background 0.3s ease;
+}
+
+[data-theme="dark"] .theme-toggle-track {
+  background: linear-gradient(135deg, #3e2e1c 0%, #5a3e22 100%);
+}
+
+.theme-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition: transform 0.3s ease, background 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .theme-toggle-thumb {
+  transform: translateX(24px);
+  background: #2a1e12;
+}
+
+.theme-toggle-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 600;
 }
 
 @media (max-width: 860px) {
