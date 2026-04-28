@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>血壓管理 App</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="panel hero-panel">
+        <div>
+          <p class="eyebrow">Blood Pressure Tracker</p>
+          <h1>血壓管理 App</h1>
+          <p class="intro">
+            記錄每次量測的收縮壓、舒張壓、脈搏與用藥狀態，系統會自動附上建立時間。
+          </p>
+        </div>
+        <div class="status-card">
+          <span class="status-label">目前紀錄數</span>
+          <strong id="record-count">0</strong>
+        </div>
+      </section>
+
+      <section class="grid-layout">
+        <section class="panel form-panel">
+          <h2>新增血壓紀錄</h2>
+          <form id="bp-form" class="bp-form">
+            <label>
+              <span>收縮壓 (mmHg)</span>
+              <input type="number" id="systolic" name="systolic" min="1" required />
+            </label>
+
+            <label>
+              <span>舒張壓 (mmHg)</span>
+              <input type="number" id="diastolic" name="diastolic" min="1" required />
+            </label>
+
+            <label>
+              <span>脈搏 (bpm)</span>
+              <input type="number" id="pulse" name="pulse" min="1" required />
+            </label>
+
+            <label>
+              <span>藥物治療</span>
+              <select id="medication" name="medication" required>
+                <option value="無">無</option>
+                <option value="已服藥">已服藥</option>
+                <option value="未服藥">未服藥</option>
+              </select>
+            </label>
+
+            <label class="full-width">
+              <span>備註</span>
+              <textarea id="note" name="note" rows="3" placeholder="例如：早餐後量測、感覺頭暈"></textarea>
+            </label>
+
+            <button type="submit">新增紀錄</button>
+          </form>
+        </section>
+
+        <section class="panel list-panel">
+          <div class="list-header">
+            <h2>血壓紀錄清單</h2>
+            <p id="empty-tip">尚未新增紀錄</p>
+          </div>
+          <ul id="record-list" class="record-list"></ul>
+        </section>
+      </section>
+    </main>
+
+    <template id="record-template">
+      <li class="record-item">
+        <div class="record-main">
+          <div>
+            <p class="record-pressure"></p>
+            <p class="record-pulse"></p>
+          </div>
+          <span class="medication-badge"></span>
+        </div>
+        <p class="record-time"></p>
+        <p class="record-note"></p>
+      </li>
+    </template>
+
+    <script src="script.js"></script>
+  </body>
+</html>
