@@ -16,9 +16,22 @@
             記錄每次量測的收縮壓、舒張壓、脈搏與用藥狀態，系統會自動附上建立時間。
           </p>
         </div>
-        <div class="status-card">
-          <span class="status-label">目前紀錄數</span>
-          <strong id="record-count">0</strong>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:16px;">
+          <button
+            id="theme-toggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="切換深色/淺色主題"
+          >
+            <span class="theme-toggle-track">
+              <span class="theme-toggle-thumb" id="theme-icon">☀️</span>
+            </span>
+            <span class="theme-toggle-label" id="theme-label">淺色</span>
+          </button>
+          <div class="status-card">
+            <span class="status-label">目前紀錄數</span>
+            <strong id="record-count">0</strong>
+          </div>
         </div>
       </section>
 

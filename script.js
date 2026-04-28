@@ -4,6 +4,28 @@ const recordTemplate = document.getElementById("record-template");
 const recordCount = document.getElementById("record-count");
 const emptyTip = document.getElementById("empty-tip");
 
+// ── Theme ──
+const themeToggleBtn = document.getElementById("theme-toggle");
+const themeIcon = document.getElementById("theme-icon");
+const themeLabel = document.getElementById("theme-label");
+
+function applyTheme(dark) {
+  document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+  themeIcon.textContent = dark ? "🌙" : "☀️";
+  themeLabel.textContent = dark ? "深色" : "淺色";
+}
+
+const savedTheme = localStorage.getItem("theme");
+const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+let isDark = savedTheme ? savedTheme === "dark" : prefersDark;
+applyTheme(isDark);
+
+themeToggleBtn.addEventListener("click", () => {
+  isDark = !isDark;
+  applyTheme(isDark);
+  localStorage.setItem("theme", isDark ? "dark" : "light");
+});
+
 const records = [];
 
 const timeFormatter = new Intl.DateTimeFormat("zh-TW", {
