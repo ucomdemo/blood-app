@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:;" />
     <title>血壓管理 App</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -16,7 +17,7 @@
             記錄每次量測的收縮壓、舒張壓、脈搏與用藥狀態，系統會自動附上建立時間。
           </p>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:16px;">
+        <div class="hero-right">
           <button
             id="theme-toggle"
             class="theme-toggle"
@@ -41,17 +42,17 @@
           <form id="bp-form" class="bp-form">
             <label>
               <span>收縮壓 (mmHg)</span>
-              <input type="number" id="systolic" name="systolic" min="1" required />
+              <input type="number" id="systolic" name="systolic" min="60" max="250" required />
             </label>
 
             <label>
               <span>舒張壓 (mmHg)</span>
-              <input type="number" id="diastolic" name="diastolic" min="1" required />
+              <input type="number" id="diastolic" name="diastolic" min="40" max="150" required />
             </label>
 
             <label>
               <span>脈搏 (bpm)</span>
-              <input type="number" id="pulse" name="pulse" min="1" required />
+              <input type="number" id="pulse" name="pulse" min="30" max="220" required />
             </label>
 
             <label>
@@ -65,8 +66,10 @@
 
             <label class="full-width">
               <span>備註</span>
-              <textarea id="note" name="note" rows="3" placeholder="例如：早餐後量測、感覺頭暈"></textarea>
+              <textarea id="note" name="note" rows="3" maxlength="500" placeholder="例如：早餐後量測、感覺頭暈"></textarea>
             </label>
+
+            <p id="form-error" class="form-error" role="alert" aria-live="polite"></p>
 
             <button type="submit">新增紀錄</button>
           </form>
