@@ -1,4 +1,9 @@
 const STORAGE_KEY = 'pulsenote-blood-pressure-records';
+const THEME_STORAGE_KEY = 'pulsenote-theme';
+const THEME_META_COLOR = {
+  light: '#f2f4ef',
+  dark: '#152521'
+};
 
 const form = document.querySelector('#reading-form');
 const systolicInput = document.querySelector('#systolic');
@@ -14,6 +19,8 @@ const liveTime = document.querySelector('#live-time');
 const averagePressure = document.querySelector('#average-pressure');
 const averagePulse = document.querySelector('#average-pulse');
 const recordCount = document.querySelector('#record-count');
+const themeToggle = document.querySelector('#theme-toggle');
+const themeMeta = document.querySelector('meta[name="theme-color"]');
 
 const medicationLabels = {
   none: '無',
@@ -22,6 +29,34 @@ const medicationLabels = {
 };
 
 let records = loadRecords();
+
+function getStoredTheme() {
+  try {
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    return storedTheme === 'dark' ? 'dark' : 'light';
+  } catch (error) {
+    return 'light';
+  }
+}
+
+function applyTheme(theme) {
+  const isDark = theme === 'dark';
+  document.documentElement.dataset.theme = theme;
+  themeToggle.setAttribute('aria-pressed', String(isDark));
+  themeToggle.setAttribute('aria-label', isDark ? '切換至淺色主題' : '切換至深色主題');
+  themeToggle.setAttribute('title', isDark ? '切換至淺色主題' : '切換至深色主題');
+  themeToggle.querySelector('.theme-icon--sun').hidden = !isDark;
+  themeToggle.querySelector('.theme-icon--moon').hidden = isDark;
+  themeMeta.setAttribute('content', THEME_META_COLOR[theme]);
+}
+
+function saveTheme(theme) {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch (error) {
+    // The current UI theme still applies when storage is unavailable.
+  }
+}
 
 function loadRecords() {
   try {
@@ -264,6 +299,12 @@ recordsList.addEventListener('click', (event) => {
   renderRecords();
 });
 
+themeToggle.addEventListener('click', () => {
+  const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  applyTheme(nextTheme);
+  saveTheme(nextTheme);
+});
+
 clearRecordsButton.addEventListener('click', () => {
   if (records.length === 0) {
     return;
@@ -279,6 +320,7 @@ clearRecordsButton.addEventListener('click', () => {
   renderRecords();
 });
 
+applyTheme(getStoredTheme());
 updateLiveTime();
 window.setInterval(updateLiveTime, 30000);
 renderRecords();
