@@ -1,8 +1,42 @@
 const form = document.getElementById('bloodForm');
 const recordList = document.getElementById('recordList');
 const clearAllBtn = document.getElementById('clearAllBtn');
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = themeToggle.querySelector('.theme-icon');
 
 const STORAGE_KEY = 'blood-pressure-records';
+const THEME_STORAGE_KEY = 'blood-pressure-theme';
+const DEFAULT_THEME = 'light';
+
+function getSavedTheme() {
+  try {
+    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    return savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : DEFAULT_THEME;
+  } catch {
+    return DEFAULT_THEME;
+  }
+}
+
+function saveTheme(theme) {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch {
+    // Keep the selected theme for the current page even when storage is unavailable.
+  }
+}
+
+function applyTheme(theme) {
+  const isDark = theme === 'dark';
+  document.documentElement.dataset.theme = theme;
+  themeIcon.textContent = isDark ? '☀' : '☾';
+  const nextThemeLabel = isDark ? '切換至淺色主題' : '切換至深色主題';
+  themeToggle.setAttribute('aria-label', nextThemeLabel);
+  themeToggle.setAttribute('title', nextThemeLabel);
+}
+
+function initializeTheme() {
+  applyTheme(getSavedTheme());
+}
 
 function getCurrentDateTime() {
   const now = new Date();
@@ -107,4 +141,11 @@ clearAllBtn.addEventListener('click', () => {
   renderRecords();
 });
 
+themeToggle.addEventListener('click', () => {
+  const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  applyTheme(nextTheme);
+  saveTheme(nextTheme);
+});
+
+initializeTheme();
 renderRecords();
