@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f6f3">
+  <title>日常血壓紀錄</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: light; --ink: #223331; --muted: #71817b; --line: #dce5df; --green: #2f695b; --pale: #e8f1eb; --red: #bd655b; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: #f4f6f3; font-family: "DM Sans", "Noto Sans TC", sans-serif; font-size: 15px; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .topbar { background: #fff; border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: 1160px; height: 72px; margin: auto; padding: 0 28px; display: flex; align-items: center; gap: 12px; }
+    .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px; background: var(--green); color: white; font-size: 20px; font-weight: 500; }
+    .brand-name { font-weight: 700; font-size: 16px; }
+    .brand-sub { margin-left: auto; color: var(--muted); font-size: 13px; }
+    main { max-width: 1160px; margin: auto; padding: 48px 28px 80px; }
+    .heading { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 30px; }
+    .eyebrow { margin: 0 0 9px; color: var(--green); font-size: 11px; font-weight: 700; letter-spacing: 0; }
+    h1 { margin: 0; font-size: 30px; line-height: 1.3; font-weight: 700; }
+    .heading p:last-child { color: var(--muted); margin: 9px 0 0; font-size: 14px; }
+    .date { color: var(--muted); font-size: 13px; white-space: nowrap; }
+    .layout { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .form-panel { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 26px; }
+    .section-heading { display: flex; align-items: center; gap: 10px; }
+    .section-heading h2 { margin: 0; font-size: 18px; }
+    .section-number { color: #87a399; font-size: 12px; font-weight: 700; }
+    .section-description { color: var(--muted); font-size: 13px; margin: 8px 0 24px; line-height: 1.6; }
+    .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 14px; }
+    .field { min-width: 0; }
+    .field.full { grid-column: 1 / -1; }
+    label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; }
+    .optional { color: #9aa8a2; font-weight: 400; }
+    .input-wrap { position: relative; }
+    input, select, textarea { display: block; width: 100%; min-width: 0; color: var(--ink); background: #fbfcfb; border: 1px solid #d5dfd9; border-radius: 5px; outline: none; }
+    input, select { height: 45px; padding: 0 12px; }
+    input { padding-right: 56px; }
+    input::placeholder, textarea::placeholder { color: #a7b3ad; }
+    input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px #dcebe3; }
+    .unit { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #98a7a0; font-size: 11px; pointer-events: none; }
+    textarea { min-height: 86px; padding: 12px; resize: vertical; }
+    .submit { width: 100%; height: 46px; margin-top: 22px; border: 0; border-radius: 5px; background: var(--green); color: white; font-weight: 600; }
+    .submit:hover { background: #245548; }
+    .form-note { margin: 14px 0 0; text-align: center; color: #93a099; font-size: 12px; }
+    .error { color: #a53d35; font-size: 13px; margin: 12px 0 0; }
+    .records { min-width: 0; }
+    .summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--line); }
+    .stat { min-width: 0; min-height: 110px; background: #fff; padding: 19px 20px; }
+    .stat-label { color: var(--muted); font-size: 12px; }
+    .stat-value { display: block; margin-top: 11px; font-size: 23px; font-weight: 700; line-height: 1.2; }
+    .stat-value small { color: #94a49b; font-size: 11px; font-weight: 400; }
+    .list-heading { display: flex; align-items: center; justify-content: space-between; margin: 35px 0 16px; }
+    .count { color: var(--muted); font-size: 12px; }
+    .record-list { display: grid; gap: 10px; }
+    .record { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; }
+    .record-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .record-date { color: var(--muted); font-size: 12px; }
+    .delete { border: 0; background: transparent; padding: 4px; color: #a3837e; font-size: 12px; }
+    .delete:hover { color: #a53d35; }
+    .record-main { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px 24px; margin-top: 13px; }
+    .pressure { font-size: 25px; font-weight: 700; line-height: 1; }
+    .pressure .slash { color: #b7c8bf; font-weight: 400; padding: 0 3px; }
+    .record-unit { color: #97a69f; font-size: 11px; font-weight: 400; }
+    .pulse { color: #677b72; font-size: 13px; }
+    .medication { margin-left: auto; color: var(--green); background: var(--pale); padding: 5px 9px; border-radius: 4px; font-size: 12px; }
+    .note { border-top: 1px solid #edf1ee; margin: 15px 0 0; padding-top: 12px; color: #73847b; font-size: 13px; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .empty { min-height: 215px; display: grid; place-content: center; text-align: center; border: 1px dashed #cbd9d0; border-radius: 8px; color: var(--muted); background: #f9fbf9; }
+    .empty-mark { margin: 0 auto 13px; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #e8f1eb; color: var(--green); font-size: 23px; }
+    .empty strong { color: #526a5e; font-size: 14px; }
+    .empty p { margin: 7px 0 0; font-size: 12px; }
+    @media (max-width: 760px) {
+      .topbar-inner { height: 64px; padding: 0 20px; }
+      .brand-sub { display: none; }
+      main { padding: 34px 20px 60px; }
+      .heading { align-items: start; }
+      h1 { font-size: 26px; }
+      .date { padding-top: 4px; }
+      .layout { grid-template-columns: 1fr; }
+      .form-panel { padding: 22px; }
+    }
+    @media (max-width: 420px) {
+      .heading { display: block; }
+      .date { display: block; margin-top: 12px; }
+      .stat { padding: 16px 12px; }
+      .stat-value { font-size: 19px; }
+      .medication { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand-mark" aria-hidden="true">+</div>
+      <span class="brand-name">日常血壓紀錄</span>
+      <span class="brand-sub">YOUR HEALTH JOURNAL</span>
+    </div>
+  </header>
+  <main>
+    <div class="heading">
+      <div>
+        <p class="eyebrow">BLOOD PRESSURE JOURNAL</p>
+        <h1>血壓管理</h1>
+        <p>記下每一次測量，掌握日常變化。</p>
+      </div>
+      <time class="date" id="today"></time>
+    </div>
+    <div class="layout">
+      <section class="form-panel" aria-labelledby="form-title">
+        <div class="section-heading"><span class="section-number">01</span><h2 id="form-title">新增測量</h2></div>
+        <p class="section-description">輸入本次測量數值，記錄會自動加上時間。</p>
+        <form id="record-form">
+          <div class="fields">
+            <div class="field">
+              <label for="systolic">收縮壓</label>
+              <div class="input-wrap"><input id="systolic" type="number" min="1" max="300" step="1" placeholder="120" required><span class="unit">mmHg</span></div>
+            </div>
+            <div class="field">
+              <label for="diastolic">舒張壓</label>
+              <div class="input-wrap"><input id="diastolic" type="number" min="1" max="300" step="1" placeholder="80" required><span class="unit">mmHg</span></div>
+            </div>
+            <div class="field full">
+              <label for="pulse">脈搏</label>
+              <div class="input-wrap"><input id="pulse" type="number" min="1" max="250" step="1" placeholder="72" required><span class="unit">次 / 分</span></div>
+            </div>
+            <div class="field full">
+              <label for="medication">藥物治療</label>
+              <select id="medication"><option value="無">無</option><option value="已服藥">已服藥</option><option value="未服藥">未服藥</option></select>
+            </div>
+            <div class="field full">
+              <label for="note">備註 <span class="optional">選填</span></label>
+              <textarea id="note" placeholder="例如：早上起床後測量" maxlength="500"></textarea>
+            </div>
+          </div>
+          <p id="error" class="error" role="alert" hidden></p>
+          <button class="submit" type="submit">儲存紀錄</button>
+          <p class="form-note">紀錄僅儲存在此瀏覽器中</p>
+        </form>
+      </section>
+      <section class="records" aria-labelledby="records-title">
+        <div class="summary" aria-label="最新測量摘要">
+          <div class="stat"><span class="stat-label">最新收縮壓</span><span class="stat-value" id="latest-systolic">— <small>mmHg</small></span></div>
+          <div class="stat"><span class="stat-label">最新舒張壓</span><span class="stat-value" id="latest-diastolic">— <small>mmHg</small></span></div>
+          <div class="stat"><span class="stat-label">最新脈搏</span><span class="stat-value" id="latest-pulse">— <small>次 / 分</small></span></div>
+        </div>
+        <div class="list-heading">
+          <div class="section-heading"><span class="section-number">02</span><h2 id="records-title">測量紀錄</h2></div>
+          <span class="count" id="count">0 筆紀錄</span>
+        </div>
+        <div id="record-list" class="record-list" aria-live="polite"></div>
+      </section>
+    </div>
+  </main>
+  <script>
+    const storageKey = 'blood-pressure-records';
+    const form = document.getElementById('record-form');
+    const list = document.getElementById('record-list');
+    const error = document.getElementById('error');
+    let records = [];
+
+    document.getElementById('today').textContent = new Intl.DateTimeFormat('zh-TW', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' }).format(new Date());
+
+    function showError(message) {
+      error.textContent = message;
+      error.hidden = !message;
+    }
+
+    function saveRecords(nextRecords) {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(nextRecords));
+        records = nextRecords;
+        showError('');
+        return true;
+      } catch {
+        showError('無法儲存紀錄，請確認瀏覽器允許本機儲存空間。');
+        return false;
+      }
+    }
+
+    function setSummary(id, value, unit) {
+      const element = document.getElementById(id);
+      element.replaceChildren(document.createTextNode(`${value ?? '—'} `));
+      const small = document.createElement('small');
+      small.textContent = unit;
+      element.append(small);
+    }
+
+    function render() {
+      const latest = records[0];
+      setSummary('latest-systolic', latest?.systolic, 'mmHg');
+      setSummary('latest-diastolic', latest?.diastolic, 'mmHg');
+      setSummary('latest-pulse', latest?.pulse, '次 / 分');
+      document.getElementById('count').textContent = `${records.length} 筆紀錄`;
+      list.replaceChildren();
+      if (!records.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.innerHTML = '<div><span class="empty-mark" aria-hidden="true">+</span><strong>還沒有測量紀錄</strong><p>新增第一筆紀錄，開始追蹤血壓。</p></div>';
+        list.append(empty);
+        return;
+      }
+      records.forEach((record, index) => {
+        const item = document.createElement('article');
+        item.className = 'record';
+        const top = document.createElement('div');
+        top.className = 'record-top';
+        const date = document.createElement('time');
+        date.className = 'record-date';
+        date.dateTime = record.createdAt;
+        date.textContent = new Intl.DateTimeFormat('zh-TW', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(record.createdAt));
+        const remove = document.createElement('button');
+        remove.className = 'delete';
+        remove.type = 'button';
+        remove.textContent = '刪除';
+        remove.setAttribute('aria-label', `刪除 ${date.textContent} 的紀錄`);
+        remove.addEventListener('click', () => {
+          if (confirm('確定要刪除這筆紀錄嗎？') && saveRecords(records.filter((_, recordIndex) => recordIndex !== index))) render();
+        });
+        top.append(date, remove);
+        const main = document.createElement('div');
+        main.className = 'record-main';
+        const pressure = document.createElement('div');
+        pressure.className = 'pressure';
+        pressure.append(document.createTextNode(record.systolic));
+        const slash = document.createElement('span');
+        slash.className = 'slash';
+        slash.textContent = '/';
+        pressure.append(slash, document.createTextNode(record.diastolic));
+        const unit = document.createElement('span');
+        unit.className = 'record-unit';
+        unit.textContent = ' mmHg';
+        pressure.append(unit);
+        const pulse = document.createElement('span');
+        pulse.className = 'pulse';
+        pulse.textContent = `脈搏 ${record.pulse} 次 / 分`;
+        const medication = document.createElement('span');
+        medication.className = 'medication';
+        medication.textContent = record.medication;
+        main.append(pressure, pulse, medication);
+        item.append(top, main);
+        if (record.note) {
+          const note = document.createElement('p');
+          note.className = 'note';
+          note.textContent = record.note;
+          item.append(note);
+        }
+        list.append(item);
+      });
+    }
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      if (!Array.isArray(saved)) throw new Error('Invalid records');
+      records = saved;
+    } catch {
+      showError('無法讀取紀錄，請確認瀏覽器的本機儲存空間可用。');
+    }
+    render();
+
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      const record = {
+        systolic: document.getElementById('systolic').value,
+        diastolic: document.getElementById('diastolic').value,
+        pulse: document.getElementById('pulse').value,
+        medication: document.getElementById('medication').value,
+        note: document.getElementById('note').value.trim(),
+        createdAt: new Date().toISOString()
+      };
+      if (saveRecords([record, ...records])) {
+        form.reset();
+        render();
+      }
+    });
+  </script>
+</body>
+</html>
