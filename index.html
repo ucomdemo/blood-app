@@ -5,20 +5,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f4f6f3">
   <title>日常血壓紀錄</title>
+  <script>
+    try {
+      const savedTheme = localStorage.getItem('blood-pressure-theme');
+      document.documentElement.dataset.theme = savedTheme === 'dark' ? 'dark' : 'light';
+    } catch {
+      document.documentElement.dataset.theme = 'light';
+    }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root { color-scheme: light; --ink: #223331; --muted: #71817b; --line: #dce5df; --green: #2f695b; --pale: #e8f1eb; --red: #bd655b; }
+    :root {
+      color-scheme: light;
+      --ink: #223331; --muted: #71817b; --line: #dce5df; --green: #2f695b; --pale: #e8f1eb;
+      --background: #f4f6f3; --surface: #fff; --input-background: #fbfcfb; --input-border: #d5dfd9;
+      --section-number: #87a399; --optional: #9aa8a2; --placeholder: #a7b3ad; --unit: #98a7a0;
+      --focus-ring: #dcebe3; --focus-outline: #2f695b; --button-background: #2f695b; --button-hover: #245548; --button-ink: #fff;
+      --form-note: #93a099; --error: #a53d35; --stat-unit: #94a49b; --delete: #a3837e;
+      --slash: #b7c8bf; --record-unit: #97a69f; --pulse: #677b72; --note-border: #edf1ee; --note: #73847b;
+      --empty-border: #cbd9d0; --empty-background: #f9fbf9; --empty-title: #526a5e; --toggle-hover: #e8f1eb;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --ink: #e3ebe6; --muted: #b0c1b6; --line: #405149; --green: #a4d8bc; --pale: #30483b;
+      --background: #171d1a; --surface: #222b26; --input-background: #19221d; --input-border: #52675a;
+      --section-number: #a7c7b5; --optional: #b0c1b6; --placeholder: #a2b3a9; --unit: #b0c1b6;
+      --focus-ring: #486b58; --focus-outline: #a4d8bc; --button-background: #a4d8bc; --button-hover: #bce6ce; --button-ink: #17241c;
+      --form-note: #b0c1b6; --error: #ffaaa1; --stat-unit: #b0c1b6; --delete: #efb4ac;
+      --slash: #9cb4a5; --record-unit: #b0c1b6; --pulse: #c1d1c6; --note-border: #405149; --note: #c1d1c6;
+      --empty-border: #60766a; --empty-background: #1d2721; --empty-title: #d3e2d8; --toggle-hover: #354a3d;
+    }
     * { box-sizing: border-box; }
-    body { margin: 0; color: var(--ink); background: #f4f6f3; font-family: "DM Sans", "Noto Sans TC", sans-serif; font-size: 15px; }
+    body { margin: 0; color: var(--ink); background: var(--background); font-family: "DM Sans", "Noto Sans TC", sans-serif; font-size: 15px; }
     button, input, select, textarea { font: inherit; }
     button { cursor: pointer; }
-    .topbar { background: #fff; border-bottom: 1px solid var(--line); }
+    .topbar { background: var(--surface); border-bottom: 1px solid var(--line); }
     .topbar-inner { max-width: 1160px; height: 72px; margin: auto; padding: 0 28px; display: flex; align-items: center; gap: 12px; }
-    .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px; background: var(--green); color: white; font-size: 20px; font-weight: 500; }
+    .brand-mark { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 8px; background: var(--button-background); color: var(--button-ink); font-size: 20px; font-weight: 500; }
     .brand-name { font-weight: 700; font-size: 16px; }
     .brand-sub { margin-left: auto; color: var(--muted); font-size: 13px; }
+    .theme-toggle { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+    .theme-toggle:hover { background: var(--toggle-hover); }
+    .theme-toggle svg { width: 20px; height: 20px; }
+    .theme-toggle svg[hidden] { display: none; }
+    button:focus-visible { outline: 3px solid var(--focus-outline); outline-offset: 3px; }
     main { max-width: 1160px; margin: auto; padding: 48px 28px 80px; }
     .heading { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 30px; }
     .eyebrow { margin: 0 0 9px; color: var(--green); font-size: 11px; font-weight: 700; letter-spacing: 0; }
@@ -26,56 +58,57 @@
     .heading p:last-child { color: var(--muted); margin: 9px 0 0; font-size: 14px; }
     .date { color: var(--muted); font-size: 13px; white-space: nowrap; }
     .layout { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 28px; align-items: start; }
-    .form-panel { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 26px; }
+    .form-panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 26px; }
     .section-heading { display: flex; align-items: center; gap: 10px; }
     .section-heading h2 { margin: 0; font-size: 18px; }
-    .section-number { color: #87a399; font-size: 12px; font-weight: 700; }
+    .section-number { color: var(--section-number); font-size: 12px; font-weight: 700; }
     .section-description { color: var(--muted); font-size: 13px; margin: 8px 0 24px; line-height: 1.6; }
     .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 14px; }
     .field { min-width: 0; }
     .field.full { grid-column: 1 / -1; }
     label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; }
-    .optional { color: #9aa8a2; font-weight: 400; }
+    .optional { color: var(--optional); font-weight: 400; }
     .input-wrap { position: relative; }
-    input, select, textarea { display: block; width: 100%; min-width: 0; color: var(--ink); background: #fbfcfb; border: 1px solid #d5dfd9; border-radius: 5px; outline: none; }
+    input, select, textarea { display: block; width: 100%; min-width: 0; color: var(--ink); background: var(--input-background); border: 1px solid var(--input-border); border-radius: 5px; outline: none; }
     input, select { height: 45px; padding: 0 12px; }
     input { padding-right: 56px; }
-    input::placeholder, textarea::placeholder { color: #a7b3ad; }
-    input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px #dcebe3; }
-    .unit { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #98a7a0; font-size: 11px; pointer-events: none; }
+    input::placeholder, textarea::placeholder { color: var(--placeholder); opacity: 1; }
+    input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--focus-ring); }
+    .unit { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--unit); font-size: 11px; pointer-events: none; }
     textarea { min-height: 86px; padding: 12px; resize: vertical; }
-    .submit { width: 100%; height: 46px; margin-top: 22px; border: 0; border-radius: 5px; background: var(--green); color: white; font-weight: 600; }
-    .submit:hover { background: #245548; }
-    .form-note { margin: 14px 0 0; text-align: center; color: #93a099; font-size: 12px; }
-    .error { color: #a53d35; font-size: 13px; margin: 12px 0 0; }
+    .submit { width: 100%; height: 46px; margin-top: 22px; border: 0; border-radius: 5px; background: var(--button-background); color: var(--button-ink); font-weight: 600; }
+    .submit:hover { background: var(--button-hover); }
+    .form-note { margin: 14px 0 0; text-align: center; color: var(--form-note); font-size: 12px; }
+    .error { color: var(--error); font-size: 13px; margin: 12px 0 0; }
     .records { min-width: 0; }
     .summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--line); }
-    .stat { min-width: 0; min-height: 110px; background: #fff; padding: 19px 20px; }
+    .stat { min-width: 0; min-height: 110px; background: var(--surface); padding: 19px 20px; }
     .stat-label { color: var(--muted); font-size: 12px; }
     .stat-value { display: block; margin-top: 11px; font-size: 23px; font-weight: 700; line-height: 1.2; }
-    .stat-value small { color: #94a49b; font-size: 11px; font-weight: 400; }
+    .stat-value small { color: var(--stat-unit); font-size: 11px; font-weight: 400; }
     .list-heading { display: flex; align-items: center; justify-content: space-between; margin: 35px 0 16px; }
     .count { color: var(--muted); font-size: 12px; }
     .record-list { display: grid; gap: 10px; }
-    .record { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; }
+    .record { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; }
     .record-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
     .record-date { color: var(--muted); font-size: 12px; }
-    .delete { border: 0; background: transparent; padding: 4px; color: #a3837e; font-size: 12px; }
-    .delete:hover { color: #a53d35; }
+    .delete { border: 0; background: transparent; padding: 4px; color: var(--delete); font-size: 12px; }
+    .delete:hover { color: var(--error); }
     .record-main { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px 24px; margin-top: 13px; }
     .pressure { font-size: 25px; font-weight: 700; line-height: 1; }
-    .pressure .slash { color: #b7c8bf; font-weight: 400; padding: 0 3px; }
-    .record-unit { color: #97a69f; font-size: 11px; font-weight: 400; }
-    .pulse { color: #677b72; font-size: 13px; }
+    .pressure .slash { color: var(--slash); font-weight: 400; padding: 0 3px; }
+    .record-unit { color: var(--record-unit); font-size: 11px; font-weight: 400; }
+    .pulse { color: var(--pulse); font-size: 13px; }
     .medication { margin-left: auto; color: var(--green); background: var(--pale); padding: 5px 9px; border-radius: 4px; font-size: 12px; }
-    .note { border-top: 1px solid #edf1ee; margin: 15px 0 0; padding-top: 12px; color: #73847b; font-size: 13px; white-space: pre-wrap; overflow-wrap: anywhere; }
-    .empty { min-height: 215px; display: grid; place-content: center; text-align: center; border: 1px dashed #cbd9d0; border-radius: 8px; color: var(--muted); background: #f9fbf9; }
-    .empty-mark { margin: 0 auto 13px; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #e8f1eb; color: var(--green); font-size: 23px; }
-    .empty strong { color: #526a5e; font-size: 14px; }
+    .note { border-top: 1px solid var(--note-border); margin: 15px 0 0; padding-top: 12px; color: var(--note); font-size: 13px; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .empty { min-height: 215px; display: grid; place-content: center; text-align: center; border: 1px dashed var(--empty-border); border-radius: 8px; color: var(--muted); background: var(--empty-background); }
+    .empty-mark { margin: 0 auto 13px; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--pale); color: var(--green); font-size: 23px; }
+    .empty strong { color: var(--empty-title); font-size: 14px; }
     .empty p { margin: 7px 0 0; font-size: 12px; }
     @media (max-width: 760px) {
       .topbar-inner { height: 64px; padding: 0 20px; }
       .brand-sub { display: none; }
+      .theme-toggle { margin-left: auto; }
       main { padding: 34px 20px 60px; }
       .heading { align-items: start; }
       h1 { font-size: 26px; }
@@ -98,6 +131,10 @@
       <div class="brand-mark" aria-hidden="true">+</div>
       <span class="brand-name">日常血壓紀錄</span>
       <span class="brand-sub">YOUR HEALTH JOURNAL</span>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切換至深色主題" title="切換至深色主題">
+        <svg id="theme-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg>
+        <svg id="theme-sun" aria-hidden="true" hidden viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path></svg>
+      </button>
     </div>
   </header>
   <main>
@@ -157,10 +194,35 @@
   </main>
   <script>
     const storageKey = 'blood-pressure-records';
+    const themeKey = 'blood-pressure-theme';
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeMoon = document.getElementById('theme-moon');
+    const themeSun = document.getElementById('theme-sun');
     const form = document.getElementById('record-form');
     const list = document.getElementById('record-list');
     const error = document.getElementById('error');
     let records = [];
+
+    function updateThemeButton() {
+      const dark = document.documentElement.dataset.theme === 'dark';
+      const label = dark ? '切換至淺色主題' : '切換至深色主題';
+      themeToggle.setAttribute('aria-label', label);
+      themeToggle.title = label;
+      themeMoon.toggleAttribute('hidden', dark);
+      themeSun.toggleAttribute('hidden', !dark);
+    }
+
+    updateThemeButton();
+    themeToggle.addEventListener('click', () => {
+      const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = theme;
+      updateThemeButton();
+      try {
+        localStorage.setItem(themeKey, theme);
+      } catch {
+        // Keep the selected theme for this page when storage is unavailable.
+      }
+    });
 
     document.getElementById('today').textContent = new Intl.DateTimeFormat('zh-TW', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' }).format(new Date());
 
