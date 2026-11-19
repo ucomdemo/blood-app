@@ -5,7 +5,44 @@ const form = document.querySelector("#record-form");
 const recordsList = document.querySelector("#records-list");
 const recordCount = document.querySelector("#record-count");
 const formMessage = document.querySelector("#form-message");
+const themeToggle = document.querySelector("#theme-toggle");
+const themeValue = document.querySelector("#theme-value");
+const themeMessage = document.querySelector("#theme-message");
+const themeColor = document.querySelector('meta[name="theme-color"]');
 const measurementFields = ["systolic", "diastolic", "pulse"];
+const THEME_STORAGE_KEY = "daily-blood-pressure-theme";
+const themeInitialization = window.themeInitialization;
+
+function showThemeMessage(message) {
+  themeMessage.textContent = message;
+  themeMessage.classList.toggle("is-error", Boolean(message));
+}
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  themeToggle.checked = theme === "dark";
+  themeValue.textContent = theme === "dark" ? "深色" : "淺色";
+  themeColor.content = theme === "dark" ? "#111827" : "#f6f7fb";
+}
+
+applyTheme(themeInitialization.theme);
+if (themeInitialization.error === "read") {
+  showThemeMessage("無法讀取主題偏好，已使用淺色主題。");
+} else if (themeInitialization.error === "invalid") {
+  showThemeMessage("已儲存的主題偏好無效，已使用淺色主題。");
+}
+
+themeToggle.addEventListener("change", () => {
+  const theme = themeToggle.checked ? "dark" : "light";
+  applyTheme(theme);
+
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+    showThemeMessage("");
+  } catch {
+    showThemeMessage("無法儲存主題偏好，重新開啟後可能還原為淺色");
+  }
+});
 
 function showMessage(message, isError) {
   formMessage.textContent = message;
